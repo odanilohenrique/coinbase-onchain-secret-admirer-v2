@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-// Força o Next.js a não fazer cache estático e ser dinâmico (solução para templates complexos)
+// Força o Next.js a não fazer cache estático e ser dinâmico
 export const dynamic = 'force-dynamic';
 
 // --- MOCK MINIKIT (Simulação Segura de Pagamento) ---
@@ -18,13 +18,12 @@ const mockMiniKit = {
   }
 };
 
-export default function Page() { // Componente principal deve ser 'Page'
+export default function Page() {
   
   // --- TRAVA DE SEGURANÇA (Mounting) ---
   const [isMounted, setIsMounted] = useState(false);
 
   // --- ESTADOS DO APP ---
-  // Controla qual tela está visível: home (enviar), sent (enviado), inbox (recebido), game (adivinhar), result (resultado)
   const [view, setView] = useState('home'); 
   const [targetUser, setTargetUser] = useState('');
   const [message, setMessage] = useState('');
@@ -39,7 +38,6 @@ export default function Page() { // Componente principal deve ser 'Page'
   // --- EFEITO INICIAL ---
   useEffect(() => {
     setIsMounted(true);
-    // Inicializa a mensagem de exemplo para o inbox
     setGeneratedMessage('Você ilumina qualquer ambiente... (Exemplo)');
   }, []);
 
@@ -57,7 +55,7 @@ export default function Page() { // Componente principal deve ser 'Page'
           zIndex: 9999 
         }}
       >
-        <div className="text-white text-center pt-20">Carregando...</div>
+        <div className="text-white text-center pt-20">Aguarde...</div>
       </div>
     );
   }
@@ -67,7 +65,6 @@ export default function Page() { // Componente principal deve ser 'Page'
     if (!targetUser || !message) return;
     setIsLoading(true);
 
-    // Simula processamento da IA
     setTimeout(() => {
       let rewrote = message;
       if (isFlirty) {
@@ -77,7 +74,6 @@ export default function Page() { // Componente principal deve ser 'Page'
       }
       
       setGeneratedMessage(rewrote);
-      
       setIsLoading(false);
       setView('sent');
     }, 2000);
@@ -86,7 +82,6 @@ export default function Page() { // Componente principal deve ser 'Page'
   const handlePay = async () => {
     setPaymentStatus('processing');
     try {
-      // Simula a chamada de pagamento com o MiniKit
       const res = await mockMiniKit.commands.pay(0.1); 
       if (res.success) {
         setPaymentStatus('success');
@@ -94,13 +89,11 @@ export default function Page() { // Componente principal deve ser 'Page'
       }
     } catch (e: any) {
       setPaymentStatus('idle');
-      // Uso de console.error ao invés de alert()
       console.error('Erro simulado no pagamento:', e); 
     }
   };
 
   const handleGuess = () => {
-    // Quem enviou a mensagem (mock)
     const realSender = 'usuario_teste'; 
     
     if (guess.toLowerCase() === realSender.toLowerCase()) {
@@ -113,48 +106,39 @@ export default function Page() { // Componente principal deve ser 'Page'
         setGameResult('lose');
         setView('result');
       } else {
-        // Alerta substituído por console.log para seguir as regras do ambiente
         console.log(`Errou! Restam ${newAttempts} tentativas.`); 
       }
     }
   };
   
-  // --- LAYOUT PADRÃO ---
-  const Layout = ({ children }: { children: React.ReactNode }) => (
-    // Usa estilos inline para garantir o fundo preto e z-index alto
-    <div 
-      style={{ 
-        backgroundColor: '#000', 
-        minHeight: '100vh', 
-        color: '#fff', 
-        position: 'absolute', 
-        top: 0, 
-        left: 0, 
-        width: '100%', 
-        zIndex: 9999 
-      }} 
-      className="p-6 flex flex-col items-center justify-center font-sans"
-    >
-      {children}
-    </div>
-  );
-
+  // --- LAYOUT ULTRA-AGRESSIVO ---
+  // A cor de fundo aqui é **VERDE NEON** para garantir que você veja a mudança
+  // e confirme que este arquivo está sendo renderizado no DOM.
+  const topLevelStyle = { 
+    backgroundColor: '#0f0', // VERDE NEON
+    minHeight: '100vh', 
+    color: '#000', 
+    position: 'absolute' as 'absolute', // Garante que cobre tudo
+    top: 0, 
+    left: 0, 
+    width: '100%', 
+    zIndex: 99999 // Z-Index altíssimo
+  };
 
   // --- TELAS ---
-
-  // TELA 1: HOME (ENVIAR)
-  if (view === 'home') {
-    return (
-      <Layout>
-        <div className="w-full max-w-md space-y-8">
+  
+  const renderContent = () => {
+    if (view === 'home') {
+      return (
+        <div className="w-full max-w-md space-y-8 p-6 bg-black/80 rounded-2xl border border-white/20">
           <div className="text-center space-y-2">
-            <h1 className="text-5xl font-extrabold tracking-tighter drop-shadow-lg" style={{ color: '#f472b6' }}>
-              Secret <span style={{ color: '#ec4899' }}>Admirer</span>
+            <h1 className="text-5xl font-extrabold tracking-tighter text-pink-400">
+              Secret <span className="text-pink-600">Admirer</span>
             </h1>
             <p className="text-pink-200 text-lg">Envie flertes anônimos 💌</p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-white/20 space-y-4">
+          <div className="space-y-4">
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-pink-300">Para quem?</label>
               <div className="relative mt-1">
@@ -162,7 +146,7 @@ export default function Page() { // Componente principal deve ser 'Page'
                 <input 
                   type="text" 
                   placeholder="username"
-                  className="w-full bg-black/30 border border-white/10 rounded-xl py-3 pl-8 pr-4 focus:outline-none focus:border-pink-500 transition-all text-white"
+                  className="w-full bg-black/50 border border-white/10 rounded-xl py-3 pl-8 pr-4 focus:outline-none focus:border-pink-500 transition-all text-white"
                   value={targetUser}
                   onChange={(e: any) => setTargetUser(e.target.value)}
                 />
@@ -172,7 +156,7 @@ export default function Page() { // Componente principal deve ser 'Page'
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-pink-300">Sua mensagem</label>
               <textarea 
-                className="w-full mt-1 bg-black/30 border border-white/10 rounded-xl p-3 h-24 focus:outline-none focus:border-pink-500 transition-all resize-none text-white"
+                className="w-full mt-1 bg-black/50 border border-white/10 rounded-xl p-3 h-24 focus:outline-none focus:border-pink-500 transition-all resize-none text-white"
                 placeholder="Escreva o que sente..."
                 maxLength={280}
                 value={message}
@@ -183,11 +167,11 @@ export default function Page() { // Componente principal deve ser 'Page'
 
             <div 
               onClick={() => setIsFlirty(!isFlirty)}
-              className="flex items-center justify-between bg-black/20 p-3 rounded-xl cursor-pointer"
+              className="flex items-center justify-between bg-black/30 p-3 rounded-xl cursor-pointer border border-white/10"
             >
               <div className="flex items-center gap-2">
-                <span className="text-xl">{isFlirty ? '🔥' : '😇'}</span>
-                <span className="font-medium text-sm">Modo Picante</span>
+                <span className="text-xl text-white">{isFlirty ? '🔥' : '😇'}</span>
+                <span className="font-medium text-sm text-white">Modo Picante</span>
               </div>
               <button 
                 className={`w-12 h-6 rounded-full transition-colors relative ${isFlirty ? 'bg-orange-500' : 'bg-gray-600'}`}
@@ -213,20 +197,17 @@ export default function Page() { // Componente principal deve ser 'Page'
 
           <button 
             onClick={() => setView('inbox')}
-            className="text-xs text-white/30 hover:text-white text-center w-full underline"
+            className="text-xs text-white/50 hover:text-white text-center w-full underline mt-4"
           >
             [Demo] Simular visão do Destinatário
           </button>
         </div>
-      </Layout>
-    );
-  }
-
-  // TELA 2: ENVIADO
-  if (view === 'sent') {
-    return (
-      <Layout>
-        <div className="w-full max-w-md text-center">
+      );
+    }
+    
+    if (view === 'sent') {
+      return (
+        <div className="w-full max-w-md text-center p-6 bg-black/80 rounded-2xl border border-white/20 text-white">
           <div className="w-24 h-24 bg-green-500/20 border border-green-500/50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(34,197,94,0.5)]">
             <span className="text-4xl text-green-400">✈️</span>
           </div>
@@ -243,16 +224,13 @@ export default function Page() { // Componente principal deve ser 'Page'
             Enviar outro
           </button>
         </div>
-      </Layout>
-    );
-  }
+      );
+    }
 
-  // TELA 3: INBOX (RECEBIDO)
-  if (view === 'inbox') {
-    return (
-      <Layout>
-        <div className="w-full max-w-md text-center">
-          <span className="text-6xl animate-pulse mb-4">💕</span>
+    if (view === 'inbox') {
+      return (
+        <div className="w-full max-w-md text-center p-6 bg-black/80 rounded-2xl border border-white/20 text-white">
+          <span className="text-6xl animate-pulse mb-4 block">💕</span>
           <h1 className="text-3xl font-bold text-center mb-6">Você tem um Admirador Secreto!</h1>
           
           <div className="w-full bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-pink-500/30 mb-8 relative overflow-hidden">
@@ -284,15 +262,12 @@ export default function Page() { // Componente principal deve ser 'Page'
           
           <button onClick={() => setView('home')} className="mt-8 text-sm text-gray-500 underline">Voltar ao início</button>
         </div>
-      </Layout>
-    );
-  }
-
-  // TELA 4: JOGO (ADIVINHAR)
-  if (view === 'game') {
-    return (
-      <Layout>
-        <div className="w-full max-w-xs text-center">
+      );
+    }
+    
+    if (view === 'game') {
+      return (
+        <div className="w-full max-w-xs text-center p-6 bg-black/80 rounded-2xl border border-white/20 text-white">
           <h2 className="text-2xl font-bold mb-6">Quem mandou isso? 🤔</h2>
           
           <div className="text-center mb-6">
@@ -318,15 +293,12 @@ export default function Page() { // Componente principal deve ser 'Page'
             Verificar
           </button>
         </div>
-      </Layout>
-    );
-  }
+      );
+    }
 
-  // TELA 5: RESULTADO
-  if (view === 'result') {
-    return (
-      <Layout>
-        <div className={`p-8 rounded-xl shadow-2xl text-center border ${gameResult === 'win' ? 'bg-green-900/40 border-green-500' : 'bg-red-900/40 border-red-500'}`}>
+    if (view === 'result') {
+      return (
+        <div className={`p-8 rounded-xl shadow-2xl text-center border text-white ${gameResult === 'win' ? 'bg-green-900/40 border-green-500' : 'bg-red-900/40 border-red-500'}`}>
           {gameResult === 'win' ? (
             <>
               <span className="text-6xl mb-4 block">🎉</span>
@@ -353,9 +325,18 @@ export default function Page() { // Componente principal deve ser 'Page'
             Voltar ao início
           </button>
         </div>
-      </Layout>
-    );
-  }
+      );
+    }
 
-  return null;
+    return null;
+  };
+  
+  // O componente principal. Se este fundo VERDE aparecer, o seu código está sendo executado corretamente!
+  return (
+    <div style={topLevelStyle} className="p-6 flex flex-col items-center justify-center font-sans">
+        <div className="w-full max-w-md">
+            {renderContent()}
+        </div>
+    </div>
+  );
 }
